@@ -33,5 +33,3 @@ Value handling per operator:
 - `src/components/ResultsTable.jsx` – grouped results, search, CSV export
 - `src/lib/api.js` – payload builder and fetch
 - `src/lib/runner.js` – timed batch runner
-
-# clevertap-recommendation-runner
