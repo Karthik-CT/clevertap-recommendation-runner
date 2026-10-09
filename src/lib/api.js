@@ -61,7 +61,7 @@ export function buildPayload({ strategyId, strategyName, clauses, columns, count
   const apiClauses = clauses.map(toApiClause).filter(Boolean);
   const sid = strategyId.trim();
   const responseColumns = columns.split(',').map((c) => c.trim()).filter(Boolean);
-  const n = Math.max(1, Number(count) || 10);
+  const n = Math.min(50, Math.max(1, Number(count) || 10));
 
   const payload = { id: /^\d+$/.test(sid) ? Number(sid) : sid };
   if (strategyName.trim()) payload.name = strategyName.trim();

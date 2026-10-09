@@ -11,6 +11,8 @@ import {
 } from "./lib/api";
 import { runInBatches } from "./lib/runner";
 
+const MAX_ITEMS = 50;
+
 function Countdown({ until }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function App() {
     [csv, identityText],
   );
 
-  const config = { strategyId, strategyName, clauses, columns, count };
+  const config = { strategyId, strategyName, clauses, columns, count: Math.min(MAX_ITEMS, Math.max(1, parseInt(count, 10) || 1)) };
   const preview = buildPayload({
     ...config,
     identity: identities[0] ?? "<identity>",
@@ -241,9 +243,12 @@ export default function App() {
                   id="count"
                   type="number"
                   min="1"
-                  max="100"
+                  max={MAX_ITEMS}
                   value={count}
-                  onChange={(e) => setCount(e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setCount(v === "" ? v : String(Math.min(MAX_ITEMS, Math.max(1, parseInt(v, 10) || 1))));
+                  }}
                 />
               </div>
             </div>
