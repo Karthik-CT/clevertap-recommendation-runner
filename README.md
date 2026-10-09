@@ -2,14 +2,6 @@
 
 React (Vite) UI that calls the CleverTap Recommendation API for one identity or a CSV of identities, in timed batches, and shows the results in a table.
 
-## Why there's a proxy
-
-The CleverTap API can't be called directly from a browser (CORS), and the passcode shouldn't live in front-end code you ship. In dev, `vite.config.js` forwards `/ct/<region>/...` to `https://<region>.recommendation.clevertap.com/...` server-side, exactly like your cURL. `npm run build && npm run preview` uses the same proxy.
-
-If you deploy this beyond your own machine, put the same forwarding rule in your server (Nginx, Express, a serverless function) and ideally keep the passcode on the server instead of typing it into the page.
-
-To add a region, add it to `REGIONS` in both `vite.config.js` and `src/lib/api.js`.
-
 ## How the request is built
 
 | UI                | Payload                                                                                                     |
