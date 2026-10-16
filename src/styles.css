@@ -199,3 +199,4 @@ tbody.group tr:hover td { background: var(--accent-soft); }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+.filters .id-type { margin-bottom: 14px; }

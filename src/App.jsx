@@ -34,6 +34,7 @@ export default function App() {
   const [count, setCount] = useState(10);
 
   const [clauses, setClauses] = useState([]);
+  const [logic, setLogic] = useState("AND");
 
   const [identityText, setIdentityText] = useState("");
   const [csv, setCsv] = useState(null);
@@ -54,7 +55,7 @@ export default function App() {
     [csv, identityText],
   );
 
-  const config = { strategyId, strategyName, clauses, columns, count: Math.min(MAX_ITEMS, Math.max(1, parseInt(count, 10) || 1)) };
+  const config = { strategyId, strategyName, clauses, logic, columns, count: Math.min(MAX_ITEMS, Math.max(1, parseInt(count, 10) || 1)) };
   const preview = buildPayload({
     ...config,
     identity: identities[0] ?? (idType === "objectId" ? "<CleverTap ID>" : "<identity>"),
@@ -260,11 +261,17 @@ export default function App() {
           <fieldset disabled={running}>
             <legend>
               Filters{" "}
-              <span className="legend-note">All conditions must match</span>
+              <span className="legend-note">
+                {logic === "AND"
+                  ? "All conditions must match"
+                  : "Any condition can match"}
+              </span>
             </legend>
             <FilterBuilder
               clauses={clauses}
               setClauses={setClauses}
+              logic={logic}
+              setLogic={setLogic}
               disabled={running}
             />
           </fieldset>

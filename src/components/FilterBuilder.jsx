@@ -60,7 +60,7 @@ function ValueInput({ clause, onChange, disabled }) {
   );
 }
 
-export default function FilterBuilder({ clauses, setClauses, disabled }) {
+export default function FilterBuilder({ clauses, setClauses, logic, setLogic, disabled }) {
   const update = (c) =>
     setClauses((all) => all.map((x) => (x.id === c.id ? c : x)));
   const remove = (id) => setClauses((all) => all.filter((x) => x.id !== id));
@@ -68,6 +68,23 @@ export default function FilterBuilder({ clauses, setClauses, disabled }) {
 
   return (
     <div className="filters">
+      {clauses.length > 0 && (
+        <div className="id-type" role="radiogroup" aria-label="Filter logic">
+          {["AND", "OR"].map((l) => (
+            <label className="check" key={l}>
+              <input
+                type="radio"
+                name="filter-logic"
+                value={l}
+                checked={logic === l}
+                disabled={disabled}
+                onChange={() => setLogic(l)}
+              />
+              {l}
+            </label>
+          ))}
+        </div>
+      )}
       {clauses.length === 0 && (
         <p className="empty-note">
           No filters. Every item in the strategy can be recommended.
@@ -77,7 +94,7 @@ export default function FilterBuilder({ clauses, setClauses, disabled }) {
         <div key={c.id}>
           {i > 0 && (
             <div className="and-joint" aria-hidden="true">
-              <span>AND</span>
+              <span>{logic}</span>
             </div>
           )}
           <div className="clause">
