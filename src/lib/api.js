@@ -57,7 +57,7 @@ export function dedupe(values) {
 
 export const parseIdentityText = (text) => dedupe(text.split(/[\n,]/));
 
-export function buildPayload({ strategyId, strategyName, clauses, columns, count, identity }) {
+export function buildPayload({ strategyId, strategyName, clauses, columns, count, identity, idType = 'identity' }) {
   const apiClauses = clauses.map(toApiClause).filter(Boolean);
   const sid = strategyId.trim();
   const responseColumns = columns.split(',').map((c) => c.trim()).filter(Boolean);
@@ -67,7 +67,8 @@ export function buildPayload({ strategyId, strategyName, clauses, columns, count
   if (strategyName.trim()) payload.name = strategyName.trim();
   payload.scope = {};
   if (apiClauses.length) payload.filters = { logic: 'AND', clauses: apiClauses };
-  payload.identity = identity;
+  if (idType === 'objectId') payload.objectId = identity;
+  else payload.identity = identity;
   payload.responseColumns = responseColumns;
   payload.sort = [];
   payload.count = n;

@@ -45,12 +45,16 @@ export default function AudienceInput({
   setText,
   csv,
   setCsv,
+  idType,
+  setIdType,
   disabled,
 }) {
   const fileRef = useRef(null);
   const [error, setError] = useState("");
-  const textLocked = disabled || !!csv;
-  const csvLocked = disabled || text.trim() !== "";
+  const noType = !idType;
+  const label = idType === "objectId" ? "CleverTap ID" : "identity";
+  const textLocked = disabled || noType || !!csv;
+  const csvLocked = disabled || noType || text.trim() !== "";
   const ids = csvIdentities(csv);
 
   const load = async (file, hasHeader = true) => {
@@ -72,19 +76,46 @@ export default function AudienceInput({
 
   return (
     <div className="audience">
+      <div className="id-type" role="radiogroup" aria-label="Identifier type">
+        <label className="check">
+          <input
+            type="radio"
+            name="id-type"
+            value="identity"
+            checked={idType === "identity"}
+            disabled={disabled}
+            onChange={() => setIdType("identity")}
+          />
+          Identity
+        </label>
+        <label className="check">
+          <input
+            type="radio"
+            name="id-type"
+            value="objectId"
+            checked={idType === "objectId"}
+            disabled={disabled}
+            onChange={() => setIdType("objectId")}
+          />
+          CleverTap ID
+        </label>
+      </div>
+
       <div className={`aud-option ${textLocked ? "locked" : ""}`}>
-        <label htmlFor="identity-text">Type identities</label>
+        <label htmlFor="identity-text">Type {noType ? "values" : `${label}s`}</label>
         <input
           id="identity-text"
           value={text}
           disabled={textLocked}
-          placeholder="identity1, identity2"
+          placeholder={noType ? "Select Identity or CleverTap ID first" : `${label}1, ${label}2`}
           onChange={(e) => setText(e.target.value)}
         />
         <p className="hint">
-          {csv
-            ? "Remove the CSV to type identities instead."
-            : "One identity, or several separated by commas."}
+          {noType
+            ? "Choose Identity or CleverTap ID above."
+            : csv
+              ? `Remove the CSV to type ${label}s instead.`
+              : `One ${label}, or several separated by commas.`}
         </p>
       </div>
 
@@ -105,9 +136,11 @@ export default function AudienceInput({
               onChange={(e) => e.target.files?.[0] && load(e.target.files[0])}
             />
             <p className="hint">
-              {csvLocked && !disabled
-                ? "Clear the identities above to upload a CSV instead."
-                : "Pick the identity column after uploading."}
+              {noType
+                ? "Choose Identity or CleverTap ID above."
+                : csvLocked && !disabled
+                  ? `Clear the ${label}s above to upload a CSV instead.`
+                  : `Pick the ${label} column after uploading.`}
             </p>
           </>
         ) : (

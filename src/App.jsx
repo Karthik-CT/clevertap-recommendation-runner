@@ -37,6 +37,7 @@ export default function App() {
 
   const [identityText, setIdentityText] = useState("");
   const [csv, setCsv] = useState(null);
+  const [idType, setIdType] = useState("");
 
   const [batchSize, setBatchSize] = useState(1);
   const [intervalSec, setIntervalSec] = useState(3);
@@ -56,14 +57,16 @@ export default function App() {
   const config = { strategyId, strategyName, clauses, columns, count: Math.min(MAX_ITEMS, Math.max(1, parseInt(count, 10) || 1)) };
   const preview = buildPayload({
     ...config,
-    identity: identities[0] ?? "<identity>",
+    identity: identities[0] ?? (idType === "objectId" ? "<CleverTap ID>" : "<identity>"),
+    idType,
   });
 
   const missing = [];
   if (!accountId.trim()) missing.push("account ID");
   if (!passcode.trim()) missing.push("passcode");
   if (!strategyId.trim()) missing.push("strategy ID");
-  if (!identities.length) missing.push("at least one identity");
+  if (!idType) missing.push("an ID type (Identity or CleverTap ID)");
+  else if (!identities.length) missing.push("at least one identity / CleverTap ID");
 
   const done = results.length;
   const ok = results.filter((r) => r.status !== "error").length;
@@ -75,7 +78,7 @@ export default function App() {
     const controller = new AbortController();
     abortRef.current = controller;
     const list = identities;
-    const snapshot = { ...config };
+    const snapshot = { ...config, idType };
     const creds = { region, accountId, passcode };
     setResults([]);
     setTotal(list.length);
@@ -273,6 +276,8 @@ export default function App() {
               setText={setIdentityText}
               csv={csv}
               setCsv={setCsv}
+              idType={idType}
+              setIdType={setIdType}
               disabled={running}
             />
           </fieldset>
